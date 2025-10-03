@@ -3,6 +3,7 @@ package main
 import (
 	"bookstore_grpc/controllers"
 	"bookstore_grpc/db"
+	"bookstore_grpc/middleware"
 	"bookstore_grpc/proto"
 	"bookstore_grpc/utils"
 	"fmt"
@@ -23,7 +24,9 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+	grpc.UnaryInterceptor(middleware.AuthInterceptor),
+)
 	proto.RegisterBookstoreServiceServer(grpcServer, controllers.NewBookstoreController())
 
 	fmt.Println("gRPC server running on port", port)
